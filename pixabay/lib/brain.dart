@@ -1,49 +1,34 @@
-import 'package:flutter/material.dart';
+import 'package:image_downloader/image_downloader.dart';
 import 'package:pixabay/models/Hit.dart';
 import 'package:pixabay/services/network.dart';
-import 'models/Hit.dart';
-import 'package:pixabay/components/alert_listTile.dart';
 
 class Brain {
   Network n = new Network();
-  List<Widget> _list = [
-    Center(
-      child: Text('Click on the Floating Action Button'),
-    )
-  ];
 
-  Future<void> newList() async {
-    List<Hit> list = await n.getList();
-    _list.clear();
-    list.forEach((item) {
-      _list.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: AlertListTile(
-            title: item.getId().toString(),
-            leading: SizedBox(
-              width: 50,
-              height: 50,
-              child: Image.network(
-                item.getPreviewURL(),
-              ),
-            ),
-            content: SizedBox(
-              width: 200,
-              height: 200,
-              child: Image.network(
-                item.getPreviewURL(),
-              ),
-            ),
-          ),
-        ),
-      );
-    });
-  }
+  String _imagePath = '';
 
+  List<Hit> _list = [];
+
+  //getters
   List getList() => _list;
+
+  String getImagePath() => _imagePath;
+
+  int getId(int i) => _list[i].getId();
+
+  String getPreviewUrl(int i) => _list[i].getPreviewURL();
 
   int getLength() => _list.length;
 
-  Widget getIndex(int i) => _list[i];
+  //setters
+  Future<void> downloadImage(String url) async {
+    dynamic image = await n.downloadImage(url: url);
+    _imagePath = await ImageDownloader.findPath(image);
+  }
+
+  Future<void> newList(context) async {
+    List<Hit> list = await n.getList();
+    _list.clear();
+    _list.addAll(list);
+  }
 }

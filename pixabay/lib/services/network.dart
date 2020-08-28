@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:pixabay/models/Hit.dart';
+import 'package:image_downloader/image_downloader.dart';
 
 class Network {
   Future<List<Hit>> getList() async {
@@ -10,5 +11,9 @@ class Network {
     dynamic response = await http.get(url);
     var jsonResponse = convert.jsonDecode(response.body)['hits'] as List;
     return jsonResponse.map((item) => Hit.fromJson(item)).toList();
+  }
+
+  Future<dynamic> downloadImage({String url}) async {
+    return await ImageDownloader.downloadImage(url);
   }
 }
